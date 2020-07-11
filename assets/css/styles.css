@@ -1,0 +1,58 @@
+body {
+    background: #dfb8ab;
+}
+
+
+.group-founder{
+    background-color: #b0bec5;
+}
+
+.visible {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.invisible {
+    display:none;
+}
+/* for graf */
+
+#app {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 800px;
+  }
+  
+  .vtc-downloads {
+    &-controls {
+      @media (min-width: 699px) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      select {
+        margin-left: 10px;
+        font-size: 14px;
+        border: 1px solid rgba(#000, 0.2);
+        background: transparent;
+      }
+    }
+    &-control {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      @media (max-width: 698px) {
+        justify-content: space-between;
+      }
+    }
+  
+    .vtc {
+      height: 250px;
+      font-size: 12px;
+      .stroke {
+        stroke: #39af77;
+        stroke-width: 2;
+      }
+    }
+  }

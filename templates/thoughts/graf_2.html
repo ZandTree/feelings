@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+ <!-- load thought_tag %} -->
+    {% block content %}
+    <div class="container">
+        <h1>Graf of my thoughts is coming...</h1>
+        {% verbatim %}
+        <div class="row" id="app">  
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem ipsum cum aliquam quam! Assumenda sit odit ullam fugiat magnam eligendi dolor animi vero doloremque quibusdam. Sit ut voluptas eius distinctio.</p>
+            
+            <canvas id="myChart"></canvas>
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consectetur voluptas alias ipsa aut culpa distinctio soluta ea illo nobis in nam doloribus quidem aspernatur et, unde libero sit optio ipsum!</p>
+        </div>
+        {% endverbatim %}
+     </div>   
+    {% endblock content%}
+
+ {% block js %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+ <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+<script >
+  // var chart_data not from template_tags but from separ view context (dashboard.html')
+  var myData = {{chart_data|safe}};  
+  var lab = myData.labels;
+  console.log(`time line ${lab.length}`,lab);
+  var scor = myData.scores; 
+  console.log(`score line ${scor.length}`,scor); 
+ 
+  let myChart = document.getElementById('myChart').getContext('2d');
+
+  //global features
+  Chart.defaults.global.defaultFontFamily='lato';
+  Chart.defaults.global.defaultFontSize=18;
+  Chart.defaults.global.defaultFontColor='#777';
+
+
+  let massPopChart = new Chart(myChart,{
+    type:'line', //'horizontalBar', //line','bar','bubble,line,pie,doughnut,radarr
+    // type:'line', //'bar','bubble//line,pie,line,doughnut,radar,bar
+    data: {
+        labels: myData.labels,
+        datasets: [{
+            label: 'Grafic of you mood',
+            data: myData.scores,
+            // differen css styles to custom
+            // backgroundColor may be aan array :['rgba(...)','rgba...']
+            // backgroundColor: 'rgb(225, 40, 27)',
+            borderWidth:4,
+            borderColor: 'red',
+            // otherwise default == light gray
+            fill:false,
+        }]
+    },
+    options:{
+        //title,legend ans so on
+        title:{
+            display:true,
+            text:'Посмотри на свое настроение',
+            fontSize:26
+        },
+        legend:{
+            display:false
+            // otherwise you can customize it
+            // position:'bottom',//right
+            // labels:{
+            //     fontColor:'#000'
+            // }
+        },
+        layout:{
+            padding:{
+                left:0,
+                right:0,
+                bottom:20,
+                top:20
+            }
+        }
+        // optional custom tooltips (in case of bar)
+    }
+   
+  })     
+        
+     
+  </script>
+  {% endblock %}
+                         

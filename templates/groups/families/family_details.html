@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col col-md-7">
+          <h1 class="display-4">Family {{object.name}}</h1>
+            <p class="lead">Description: {{object.description}}</p>
+            <hr class="my-4">
+            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+            <p class="lead">
+              {% if user == object.created_by %}
+              <a class="btn btn-primary btn-lg" href="{% url 'groups:edit-family' object.slug %}" role="button">Edit</a>
+              {% else %}
+              <a class="btn btn-danger btn-lg" 
+                 href="{% url 'groups:leave-family' object.slug   %}" role="button">
+                 Leave this family</a>
+              {% endif %}
+            </p>
+          
+                         
+          </div> 
+          <div class="col col-md-5">
+            <div class="list-group">
+              <h4>Members are:  
+                {% for mem in object.members.all%}
+                    {% if object.created_by == mem %}  
+                      <a href="#" class="list-group-item list-group-item-action group-founder">{{mem.username}}</a>
+                    {% else %}
+                      <a href="#" class="list-group-item list-group-item-action ">
+                        {{mem.username}}</a>                               
+                      {% endif %}  
+                      {% endfor %}
+                </div>  
+                           
+            </div>               
+      </div>
+      {% if user == object.created_by %}
+      <div class="row">
+        <div class="col col-md-6">
+          <h4>Invite people to your family</h4>
+          <form action="#" method='POST'>
+                  {% csrf_token %}
+                  {% bootstrap_field form.username_or_email layout='horizontal' %}
+                  <input type="submit" value="Invite" class="btn btn-sm btn-success">
+          </form>
+        </div>
+      </div>
+      {% endif %}
+</div>             
+{% endblock %}
+ 
+                 
+        
+

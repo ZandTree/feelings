@@ -1,0 +1,10 @@
+<h1>Hi, {{invite.to_user}}</h1>
+<p>You've been invited to join 
+    {% if invite.company %}
+    {{invite.company}}
+    {% else %}
+    {{invite.family}}
+    {% endif %} by {{invite.from_user}}</p>
+<p>Thanks!</p>
+<h4>Feelings</h4>
+

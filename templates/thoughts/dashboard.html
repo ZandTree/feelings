@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load thought_tag %}
+{% load group_tags %}
+{% load bootstrap4 %}
+
+{% block title %}{{block.super}}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'js/chartist/chartist.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <h1 class="text-center">Welcome to the  dashboard</h1>
+    <hr>
+    <div class="row">
+        <div class="col col-md-4">
+            <h3 class="text-center">Recent Thoughts</h3>
+            <div class="list-group">
+                {% for th in user.thoughts.all %}
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{th.get_score_display}}</h5> 
+                        <small><strong>{{th.recorded_at|date:"j D F Y G : i"}}</strong></small>                 
+                    </div>
+                    {% if th.notes %}
+                    <p class="mb-1">{{th.notes|linebreaks}}</p>
+                    {% endif %}
+                </a>
+                <hr>
+                {% endfor %}             
+            </div>
+        </div>
+        <div class="col col-md-8">                
+             {% thought_form %}
+        </div>
+    </div>  
+    <div class="row">
+        <div class="col col-md-6">
+            <h5>Here comes a chart</h5>
+            <div class="ct-chart ct-minor-sixth"></div>
+            
+        </div>
+        <div class="col col-md-6">
+            <h5>Companies you are participating</h5>
+            <div class="list-group">
+                {% if user.companies.all %}
+                    {% for group in user.companies.all%}
+                    <a href="{{group.get_absolute_url}}" class="list-group-item list-group-item-action">
+                    {{group}}
+                    </a>
+                    {% endfor %}
+                {% else %}  
+                <a href="#" class="list-group-item list-group-item-action">
+                    no membership in companies
+                    </a>
+                {% endif %}    
+                
+            </div>
+            <hr>
+            <h5>Families you are participating</h5>
+            <div class="list-group">
+                {% if user.families.all %}
+                    {% for group in user.families.all%}
+                    <a href="{{group.get_absolute_url}}" class="list-group-item list-group-item-action">
+                        {{group}}
+                    </a>
+                    {% endfor %}
+                {% else %}  
+                <a href="#" class="list-group-item list-group-item-action">
+                    no membership in families
+                    </a>
+                {% endif %}   
+            </div>  
+            <div class="list-group">                
+            </div>     
+                 
+        </div>        
+    </div>
+</div>
+{% endblock content%}
+
+{% block js %}
+<script src="{% static 'js/stretchy.js' data-filter='#id_notes' async %}"></script>
+<script src="{% static 'js/chartist/chartist.min.js' %}"></script>
+<script>
+    // how to smash it into one day?
+     {% chart_data as data %}
+                
+    var data = {{data|safe}};
+    new Chartist.Line('.ct-chart', data);
+
+</script>
+
+
+{% endblock %}

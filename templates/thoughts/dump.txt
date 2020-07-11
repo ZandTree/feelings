@@ -1,0 +1,48 @@
+{% block js %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+ <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+<script >
+  // var chart_data not from template_tags but from separ view context (dashboard.html')
+  var myData = {{chart_data|safe}};  
+  var lab = myData.labels;
+  console.log(`time line ${lab.length}`,lab);
+  var scor = myData.scores; 
+  console.log(`score line ${scor.length}`,scor); 
+
+    Vue.component('line-chart', {
+      extends: VueChartJs.Line,
+      data(){
+            thoughts:[]
+      },
+      mounted () {
+          this.renderChart({
+          labels: [4,7,9],
+          datasets: [
+            {
+              label: 'Data One',
+              backgroundColor: '#f87979',
+              data: [20,35,20]
+            }
+          ]
+        }, {responsive: true, maintainAspectRatio: false})
+      },
+            
+    })
+
+    // id="app" self
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        message: 'Graf is coming...'
+      }
+    })           
+     
+        // async created(){
+        //     let resp = await fetch('/api/v1/my-thoughts/')
+        //     this.chartdata = await resp.json(); 
+        //     this.renderChart(this.chartdata, this.options)       
+        // }
+ 
+</script>
+    {% endblock %}
+                 

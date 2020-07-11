@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load group_tags %}
+{% load bootstrap4 %}
+<!-- block title %} form.instance.prompt|default:"new question for "}}|{{quiz.course.title}}{% endblock  -->
+    {% block title %}{{headline}}{% endblock %}
+    
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col col-md-6">
+            <form action="#" method="POST">
+                <h3 class="text-center">{{headline}}</h3>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col col-md-6">                     
+                        {% bootstrap_form form %}
+                    </div>                       
+                </div>
+                <input type="submit" value="Save" class="btn btn-success">      
+            </form>
+        </div>
+    
+        {% if object %}
+        <div class="col col-md-6">
+            <h3>{{object.name}}</h3>
+                <p>{{object.description|linebreaks}}</p>
+        </div>
+        {% else %}
+        <div class="col col-md-6">
+            <h3>{{headline}}</h3>
+             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit, asperiores? Autem blanditiis velit veniam necessitatibus, incidunt repellendus veritatis recusandae id modi maiores quaerat natus accusamus itaque tempora! Optio, et omnis?
+            Architecto nam perspiciatis voluptas error explicabo unde fugiat molestias temporibus est nisi nostrum illo in quos quasi alias sunt saepe facere consequuntur repellat, modi et consectetur dolorum nesciunt. Quia, praesentium?
+            Accusantium, recusandae ex autem iure ipsam quasi molestias neque praesentium quas facilis, corrupti beatae id dolores! Eveniet sapiente perspiciatis veniam, expedita quam dolore, fuga atque necessitatibus quisquam quis ullam molestias.</p>
+        </div>
+        {% endif %}
+        
+    </div>   
+</div>
+{% endblock %}

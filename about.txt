@@ -1,0 +1,143 @@
+In this project: 
+
+1. views.py
+1.1 django braces:
+- from braces.views import SelectRelatedMixin
+model (built-in) User vs model Thoughts
+one User |=> many Thoughts (FK)
+user.thoughts.all() == select_related to Thoughts
+
+class Dashboard(LoginRequiredMixin,SelectRelatedMixin,DetailView):
+    """detailview for the user and it's related datat"""
+    model = User
+    select_related = 'thoughts'
+    template_name = 'thoughts/dashboard.html' 
+
+    def get_object(self,quesryset=None):
+        user = self.request.user 
+1.2 django braces:
+- from braces.views import  SetHeadlineMixin   
+idea: use the same template for UpdateView and CreateView
+1.3 In case: leave a company/family
+решён вопрос с помощью POST с пустой практически формой,чтобы убедиться, что 
+юзер действительно решил выйти из компании-семьи.
+отработан с помощью FormView 
++ ! let op: with the same generic form in company_form.html (edit company, leave company)
+           and braces (SetHeadlineMixin)
+
+2. General design of the project:
+- separate url (inside url of the app groups)
+- make views.py |=> views module (__init__.py(where imports) and separate company/family)
+3. models.py
+create abstract Group Model (Company(Group),Family(Group))
+
+4. usage of two js bibl's = 
+4.1.stratchy (textarea stretch)
+4.2 chartist (more complex: div where you display data )
+
+5. templatetag 
+not for project-wide data but to meet special needs in DetailView = Dashboard
+where obj = current User
+
+to feed js script in the file: json-ия данных 
+
+@register.simple_tag(takes_context=True)
+def chart_data(context):
+    user = context['user']
+    ten_days_ago = timezone.now() - datetime.timedelta(days=10)
+    # return user.thoughts.filter(recorded_at__gte = ten_days_ago)
+    thoughts_qs = user.thoughts.filter(recorded_at__gte = ten_days_ago).order_by('recorded_at')
+    return json.dumps({'labels':[th.recorded_at.strftime('%Y-%m-%d') for th in thoughts_qs],
+            'series':[[th.score*-1 for th in thoughts_qs]]
+    })
+в .html dashboard скармливание данных в формате json string to the Chartist object
+<script>
+    // how to smash it into one day?
+     {% chart_data as data %}
+                
+    var data = {{data|safe}};
+    new Chartist.Line('.ct-chart', data);
+
+</script>
+
+6.forms.py
+Kenneth не нашёл, а я нашла способ создать форму,к я потом наследую с Meta data
+lass GroupForm(forms.ModelForm):
+    class Meta:
+        model = None
+        fields = ['name','description']
+
+
+class FamilyForm(GroupForm):
+    class Meta(GroupForm.Meta):
+        model = Family
+
+7. models.py  
+7.1 in model Invitw used unique string:
+Q: why not just id == pk ?
+Re: for privacy, ну чтобы количество юзеров и их сущностей не display in url,ect...
+    import uuid |=> use method uuid4() |=> uuid.uuid4().hex 
+    т.к. не имеет следов твоего компа, длина hex string = 32
+
+7.2 реализован pattern: 
+             abstruct Group  |=> Company(Group)  Family (Group)
+             abstruct Invite |=> InviteCompany(Invite) InviteFamily(Invite)
+7.3 
+Обрати внимание на related_name
+in case Group: 
+со стороны юзера можно протоптать дорожку к 
+Compnay user.companys_created 
+Family  user.family_created
+
+class Group(n.M):
+        created_by = models.ForeignKey(
+                    User,
+                    blank = True,
+                    null=True,
+                    related_name="%(class)s_created",
+                    on_delete=models.SET_NULL
+                    )
+in case Invite
+сo стороны юзера можно протоптать дорожку к 
+Invite user.inviteCompany_invites
+ect ...
+class Invite(models.Model):
+    from_user = models.ForeignKey(User,related_name='%(class)s_invites')
+    to_user = models.ForeignKey(User,related_name='%(class)s_received')
+    #accepted = models.BooleanField(default=False)
+    status = models.IntegerField(default=0,choices=INVITED_STATUSES)
+    uuid = models.CharField(max_length=32,default='',blank=True)
+7.4
+Итересный момент inheritance of __str__() method
+Example: 
+class Invite = abstract
+def __str__(self):
+    return "{} invited the following person to join: {}".format(self.from_user,self.to_user)
+#
+InviteCompany(Invite) 
+def __str__(self):
+    string = super().__str__()
+    return "{} {}".format(string, self.company)
+
+7.5
+ status = models.IntegerField(choices=INVITED_STATUSES,default=0)  
+ INVITED_STATUSES = (
+            (0,'Pending'),
+            (1,'Accepted'),
+            (2,'Rejected')
+        )
+обрати внимание, что в ситуации с выбром, не всегда обязательно m.CharField(choices="...")          
+
+8. models.py + forms.py
+Q: как решён вопрос с привлечением в свою команду?
+Re: создатель компании\семьи приглашает, а не всякие проходимцы стучатся
+для этого пришлось поменять DetailView to FormView
+объект остался прежний: компания или семья,но
+получилась возможность  вписать формочку для object InviteCompany/InviteFamily
+(neg): пришлось переписывать метод .get_object() for company/family
+
+in forms.py |=> clean method, где и выдаётся валидация, имеется подобный 
+юзер ( мейл,имя) или нет.
+для поиска используется модель User and .get(kwargs.get('slug'))
+if not found|==> validation error object not found
+

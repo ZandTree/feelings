@@ -1,0 +1,14 @@
+{% load bootstrap4 %}
+
+        <form action="{% url 'thoughts:create' %}" method="POST">        
+            <h3 class="text-center">How are you feeling</h3>
+             {% csrf_token %}
+            <div class="row">
+                <div class="col col-md-6">                     
+                    {% bootstrap_form form %}
+                </div>                       
+            </div>
+            <input type="submit" value="Report" class="btn btn-success">     
+                
+        </form>
+    

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your invitations | {{ block.super}}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">        
+        <div class="col col-md-10">
+            <h1 class="mb-3">List of invitations to join a company</h1>            
+            {% if object_list%}
+                <ul>
+                    {% for obj in object_list %}                                           
+                            <li class="list-group-item row pb-5 mb-2" id="row-{{obj.uuid}}">
+                                <a href="#">{{obj.company}} by {{obj.from_user}}</a>
+                                <div class="float-right">                        
+                                    <a href="#" class="btn btn-danger reject"  data-uuid="{{obj.uuid}}">X</a>                        
+                                    <a href="#" class="btn btn-success accept" data-uuid="{{obj.uuid}}">Accept</a>
+                                </div>   
+                            </li>                      
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No proposal(s) to join a company</p>
+                {% endif %} 
+            </div>
+            
+        </div>  
+    </div>                              
+                   
+    {% endblock %}    
+    {% block js %}
+   <script>  
+ 
+        const reject = $(".reject");
+               
+        reject.on('click',function(e){
+            e.preventDefault();
+            let uuid = $(this).attr("data-uuid"); 
+            console.log("li is",uuid);
+            const liSource = $(`#row-${uuid}`); 
+            $.ajax({
+                method:"POST",
+                url:"/groups/company/reject-invite/",
+                data:{uuId:uuid},
+                success:function(resp){
+                    console.log("resp",resp);
+                    liSource.html(resp.msg);                
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })    
+            
+        })       
+        const accept = $(".accept"); 
+        accept.on('click',function(e){
+            e.preventDefault();            
+            let uuid = $(this).attr("data-uuid");             
+            const liSource = $(`#row-${uuid}`); 
+            console.log('liSoource',liSource);
+            $.ajax({
+                method:"POST",
+                url:"/groups/company/accept-invite/",
+                data:{uuId:uuid},
+                success:function(resp){
+                    console.log("response is",resp);
+                    liSource.html(resp.msg);                
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })            
+        })  
+    </script>  
+ {% endblock %}
+                    
+              
+
+
+
+   

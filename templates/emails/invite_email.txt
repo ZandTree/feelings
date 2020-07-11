@@ -1,0 +1,11 @@
+Hi, {{invite.user}}
+You've been invited to join 
+{% if invite.company %}
+{{invite.company}}
+{% else %}
+{{invite.family}}
+{% endif %} by {{invite.from_user}}
+Thanks!
+Feelings
+
+

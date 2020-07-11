@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+    {% block content %}
+    <div class="container">
+        <h1>Graf of my thoughts is coming...</h1>
+        {% verbatim %}
+        <div class="row" id="app">  
+            {{message}}
+            <line-chart></line-chart>
+        </div>
+        {% endverbatim %}
+     </div>   
+    {% endblock content%}
+
+ {% block js %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+ <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+<script >
+  // var chart_data not from template_tags but from separ view context (dashboard.html')
+  var myData = {{chart_data|safe}};  
+  var lab = myData.labels;  
+  var scor = myData.scores;
+  // VueChartJs.Line,
+  require('__path_to_vue.js__')
+  import {Line} from 'vue-chartjs'
+  Vue.use()
+  
+
+    Vue.component('line-chart', {
+      extends: Line,
+      props:['chart_data','options'],
+      mounted () {
+        this.renderChart(this.chart_data,this.options)
+      }
+          
+            
+    })
+
+         
+   
+   
+</script>
+    {% endblock %}
+                         

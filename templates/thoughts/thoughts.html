@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Thoughts</h1>
+    {% verbatim %}
+    <div class="row" id="app">   
+        <div class="col col-md-5" v-for="th in thoughts">
+            <div class="card" style="width:400px">
+                <div class="card-body">
+                    <h4 class="card-title text-center ">{{th.score}}</h4>
+                               
+                                          
+                    <p class="card-text text-center ">{{th.recorded_at}}</p>
+                    <p class="card-text text-center ">{{th.user}}</p>
+                    <div v-if="th.notes">
+                       
+                        <button class="btn btn-primary" v-on:click="showMore(th)">
+                            See more
+                        </button>  
+                        <p v-bind:class="{invisible:isActive}">{{th.notes}}</p> 
+                    </div>
+                    
+                    <!-- <p v-if="th.notes" class="card-text text-center">
+                        th.notes}}
+                    </p> -->
+                </div>
+            </div>
+            <hr>
+        </div>              
+    </div>
+    {% endverbatim %}
+        </div>
+        {% endblock content%}
+
+        {% block js %}
+        <script src="{% static 'js/my_vue.js' %}"></script>
+        {% endblock %}
+                         
+                
+        
